@@ -4,9 +4,23 @@ import { AppService } from './app.service';
 import { MenuModule } from './menu/menu.module';
 import { ItemsModule } from './items/items.module';
 import { CategoryModule } from './category/category.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [MenuModule, ItemsModule, CategoryModule],
+  imports: [
+    MenuModule,
+    ItemsModule,
+    CategoryModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      username: 'postgres',
+      password: 'adetomi.54',
+      database: 'gymo',
+      autoLoadEntities: true,
+      synchronize: true,
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

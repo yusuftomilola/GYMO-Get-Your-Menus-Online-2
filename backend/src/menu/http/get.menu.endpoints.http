@@ -1,0 +1,6 @@
+// GET ALL MENUS
+GET http://localhost:3000/menu
+
+
+// GET SINGLE MENU
+GET http://localhost:3000/menu/23895u39
