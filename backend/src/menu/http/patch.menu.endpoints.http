@@ -1,3 +1,8 @@
 // UPDATE A SINGLE MENU
 
-PATCH http://localhost:3000/menu/234828934823
+PATCH http://localhost:3000/menu/1
+Content-Type: application/json
+
+{
+    "title": "Continental Experience"
+}

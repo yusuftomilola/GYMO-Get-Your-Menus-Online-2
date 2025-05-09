@@ -5,9 +5,11 @@ import { MenuModule } from './menu/menu.module';
 import { ItemsModule } from './items/items.module';
 import { CategoryModule } from './category/category.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     MenuModule,
     ItemsModule,
     CategoryModule,
