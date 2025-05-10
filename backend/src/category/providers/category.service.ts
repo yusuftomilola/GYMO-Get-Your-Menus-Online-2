@@ -195,4 +195,36 @@ export class CategoryService {
       });
     }
   }
+
+  // DELETE A SINGLE CATEGORY
+  public async deleteSingleCategory(categoryId: number) {
+    try {
+      const category = await this.categoryRepository.findOne({
+        where: { id: categoryId, deletedAt: null },
+      });
+
+      if (!category) {
+        this.logger.warn(
+          `The category with id: ${categoryId} was not found or has been deleted`,
+        );
+        throw new NotFoundException('Category not found or has been deleted');
+      }
+
+      category.deletedAt = new Date();
+      category.isActive = false;
+
+      await this.categoryRepository.save(category);
+
+      return {
+        message: 'Category deleted successfully',
+        success: true,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to delete category`);
+      handleDatabaseError(error, {
+        message: 'Failed to delete category',
+        type: 'database',
+      });
+    }
+  }
 }
