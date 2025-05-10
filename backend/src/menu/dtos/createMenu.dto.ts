@@ -18,5 +18,5 @@ export class CreateMenuDto {
     example: 'The best african cuisine to suite your tastebuds',
     description: 'The description of the menu',
   })
-  description: string;
+  description?: string;
 }

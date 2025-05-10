@@ -26,7 +26,14 @@ export class Category {
     type: 'varchar',
     nullable: true,
   })
-  description: string;
+  description?: string;
+
+  @Column({
+    type: 'boolean',
+    default: true,
+    nullable: true,
+  })
+  isActive?: boolean;
 
   @ManyToOne(() => Menu, (menu) => menu.categories, { onDelete: 'CASCADE' })
   menu: Menu;

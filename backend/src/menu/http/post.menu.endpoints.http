@@ -3,6 +3,6 @@ POST http://localhost:3000/menu/new
 Content-Type: application/json
 
 {
-    "title": "African Cuisine",
-    "description": "All variaties of african dishes just for you"
+    "title": "Northen Delicacies",
+    "description": "All variaties of northern delicacies just for you"
 }

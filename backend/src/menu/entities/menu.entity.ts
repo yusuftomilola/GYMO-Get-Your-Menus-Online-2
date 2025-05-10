@@ -25,16 +25,16 @@ export class Menu {
     type: 'varchar',
     nullable: true,
   })
-  description: string;
+  description?: string;
 
   @Column({
     type: 'boolean',
     default: true,
     nullable: true,
   })
-  isActive: boolean;
+  isActive?: boolean;
 
-  @OneToMany(() => Category, (category) => category.menu, { eager: true })
+  @OneToMany(() => Category, (category) => category.menu)
   categories: Category[];
 
   @CreateDateColumn()

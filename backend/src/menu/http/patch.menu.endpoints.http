@@ -1,6 +1,6 @@
 // UPDATE A SINGLE MENU
 
-PATCH http://localhost:3000/menu/1
+PATCH http://localhost:3000/menu/1/edit
 Content-Type: application/json
 
 {

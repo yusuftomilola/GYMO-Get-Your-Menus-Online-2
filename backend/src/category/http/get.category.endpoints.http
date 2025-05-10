@@ -1,0 +1,6 @@
+// GET ALL CATEGORIES
+GET http://localhost:3000/category
+
+
+// GET A SINGLE CATEGORY
+GET http://localhost:3000/category/3

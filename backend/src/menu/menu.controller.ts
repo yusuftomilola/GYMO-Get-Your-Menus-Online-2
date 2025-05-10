@@ -61,7 +61,7 @@ export class MenuController {
   }
 
   // UPDATE SINGLE MENU
-  @Patch(':id')
+  @Patch(':id/edit')
   @ApiOperation({
     summary: 'update menu',
     description: 'update a single menu',
@@ -78,7 +78,7 @@ export class MenuController {
   }
 
   // DELETE MENU
-  @Delete(':id')
+  @Delete(':id/delete')
   @ApiOperation({
     summary: 'Delete menu',
     description: 'Delete a single menu',

@@ -24,19 +24,19 @@ export class Item {
     type: 'varchar',
     nullable: true,
   })
-  description: string;
+  description?: string;
 
   @Column({
     type: 'varchar',
     nullable: true,
   })
-  imageUrl: string;
+  imageUrl?: string;
 
   @Column({
     type: 'decimal',
     nullable: true,
   })
-  price: number;
+  price?: number;
 
   @ManyToOne(() => Category, (category) => category.items, {
     onDelete: 'CASCADE',

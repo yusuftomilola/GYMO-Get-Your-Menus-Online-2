@@ -53,6 +53,11 @@ export class MenuService {
     try {
       const menus = await this.menuRepository.find();
 
+      if (!menus) {
+        this.logger.warn('No menus found');
+        throw new NotFoundException('Menus not found');
+      }
+
       return menus;
     } catch (error) {
       this.logger.error(`Error finding menus: ${error.message}`);
@@ -125,6 +130,7 @@ export class MenuService {
       }
 
       menu.deletedAt = new Date();
+      menu.isActive = false;
 
       await this.menuRepository.save(menu);
 
