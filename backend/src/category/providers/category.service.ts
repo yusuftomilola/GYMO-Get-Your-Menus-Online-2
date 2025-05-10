@@ -6,11 +6,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from '../entities/category.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateCategoryDto } from '../dtos/createCategory.dto';
 import { handleDatabaseError } from 'src/common/utils/handleDatabaseError';
 import { Menu } from 'src/menu/entities/menu.entity';
 import { UpdateCategoryDto } from '../dtos/updateCategory.dto';
+import { Item } from 'src/items/entities/items.entity';
 
 @Injectable()
 export class CategoryService {
@@ -22,11 +23,14 @@ export class CategoryService {
 
     @InjectRepository(Menu)
     private readonly menuRepository: Repository<Menu>,
+
+    @InjectRepository(Item)
+    private readonly itemsRepository: Repository<Item>,
   ) {}
 
   // CREATE A SINGLE CATEGORY
   public async createCategory(createCategoryDto: CreateCategoryDto) {
-    const { title, description, menuId } = createCategoryDto;
+    const { title, description, menuIds } = createCategoryDto;
 
     try {
       // FIND IF THE CATEGORY ALREADY EXISTS
@@ -40,12 +44,12 @@ export class CategoryService {
       }
 
       // FIND IF THE MENU EXIST
-      const menu = await this.menuRepository.findOne({
-        where: { id: menuId, deletedAt: null },
+      const menu = await this.menuRepository.find({
+        where: { id: In(menuIds), deletedAt: null },
       });
 
       if (!menu) {
-        this.logger.warn(`Menu with id ${menuId} was not found`);
+        this.logger.warn(`Menu was not found`);
         throw new NotFoundException('Menu not found');
       }
 
@@ -53,8 +57,9 @@ export class CategoryService {
       const category = this.categoryRepository.create({
         title,
         description,
-        menu,
       });
+
+      category.menus = menu;
 
       return await this.categoryRepository.save(category);
     } catch (error) {
@@ -96,7 +101,7 @@ export class CategoryService {
     try {
       const category = await this.categoryRepository.findOne({
         where: { id: categoryId, isActive: true, deletedAt: null },
-        relations: ['menu', 'items'],
+        relations: ['menus', 'items'],
       });
 
       if (!category) {
@@ -119,10 +124,13 @@ export class CategoryService {
     categoryId: number,
     updateCategoryDto: UpdateCategoryDto,
   ) {
+    const { menuIds, itemIds, ...rest } = updateCategoryDto;
+
     try {
       // CHECK IF THE CATEGORY EXISTS
       const category = await this.categoryRepository.findOne({
         where: { id: categoryId },
+        relations: ['items', 'menus'],
       });
 
       if (!category) {
@@ -130,8 +138,53 @@ export class CategoryService {
         throw new NotFoundException('Category was not found');
       }
 
-      // UPDATE THE CATEGORY
-      Object.assign(category, updateCategoryDto);
+      // UPDATE THE CATEGORY BASE FIELDS
+      Object.assign(category, rest);
+
+      // NOTE TO SELF
+      // ON THE FRONTEND.....
+
+      // 1. If menuIds is undefined, this means the menu was not edited and an undefined is sent for the menuIds in the dto, so menu updates will be skipped - undefined is "falsy"
+
+      // 2. If menuIds is [], this means the menu was edited and the user removed all the previous menus in the category. So an empty array of [] is sent in the dto, so previous menus are removed to [] - An empty array is "truthy"
+
+      // 3. If menuIds has values, this means the menu was edited by the user and it is greater than 0 so the else block will happen.
+
+      // UPDATE MENU IF IT WAS UPDATED OR SKIP
+      if (menuIds) {
+        if (menuIds.length === 0) {
+          category.menus = [];
+        } else {
+          const newMenus = await this.menuRepository.find({
+            where: { id: In(menuIds), deletedAt: null },
+          });
+
+          if (newMenus.length !== menuIds.length) {
+            this.logger.warn(`Some menus not found`);
+            throw new NotFoundException('Menu not found');
+          }
+
+          category.menus = newMenus;
+        }
+      }
+
+      // UPDATE THE ITEMS IF IT WAS UPDATED OR SKIP
+      if (itemIds) {
+        if (itemIds.length === 0) {
+          category.items = [];
+        } else {
+          const newItems = await this.itemsRepository.find({
+            where: { id: In(itemIds), deletedAt: null },
+          });
+
+          if (newItems.length !== itemIds.length) {
+            this.logger.warn('Some items not found');
+            throw new NotFoundException('Item not found');
+          }
+
+          category.items = newItems;
+        }
+      }
 
       return await this.categoryRepository.save(category);
     } catch (error) {

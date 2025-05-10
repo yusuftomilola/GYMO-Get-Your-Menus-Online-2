@@ -19,8 +19,9 @@ export class CreateCategoryDto {
   description?: string;
 
   @IsOptional()
-  @IsNumber()
-  menuId?: number;
+  @IsArray()
+  @IsNumber({}, { each: true })
+  menuIds?: number[];
 
   @IsOptional()
   @IsArray()

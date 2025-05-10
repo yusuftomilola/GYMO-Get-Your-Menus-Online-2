@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -34,7 +35,7 @@ export class Menu {
   })
   isActive?: boolean;
 
-  @OneToMany(() => Category, (category) => category.menu)
+  @ManyToMany(() => Category, (category) => category.menus)
   categories: Category[];
 
   @CreateDateColumn()

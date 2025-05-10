@@ -1,0 +1,11 @@
+// UPDATE A SINGLE CATEGORY
+
+PATCH http://localhost:3000/category/1/edit
+Content-Type: application/json
+
+{
+    "title": "Lunch",
+    "description": "All you can eat dishes to energize your lunch",
+    "menuIds": [1],
+    "itemIds": [1,2]
+}

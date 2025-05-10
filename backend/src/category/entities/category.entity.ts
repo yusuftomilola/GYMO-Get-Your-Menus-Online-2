@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -35,8 +37,9 @@ export class Category {
   })
   isActive?: boolean;
 
-  @ManyToOne(() => Menu, (menu) => menu.categories, { onDelete: 'CASCADE' })
-  menu: Menu;
+  @ManyToMany(() => Menu, (menus) => menus.categories, { onDelete: 'CASCADE' })
+  @JoinTable()
+  menus: Menu[];
 
   @OneToMany(() => Item, (item) => item.category)
   items: Item[];

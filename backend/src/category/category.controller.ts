@@ -4,10 +4,12 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { CategoryService } from './providers/category.service';
 import { CreateCategoryDto } from './dtos/createCategory.dto';
+import { UpdateCategoryDto } from './dtos/updateCategory.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -29,5 +31,17 @@ export class CategoryController {
   @Get(':id')
   public async getSingleCategory(@Param('id', ParseIntPipe) id: number) {
     return await this.categoryService.getSingleCategory(id);
+  }
+
+  // UPDATE A SINGLE CATEGORY
+  @Patch(':id/edit')
+  public async updateSingleCategory(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ) {
+    return await this.categoryService.updateSingleCategory(
+      id,
+      updateCategoryDto,
+    );
   }
 }
