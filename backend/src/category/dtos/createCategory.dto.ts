@@ -30,14 +30,12 @@ export class CreateCategoryDto {
   description?: string;
 
   @ApiPropertyOptional({
-    description: 'Array of menu IDs associated with this category',
-    example: [1, 2],
-    type: [Number],
+    description: 'The id of menu',
+    example: 1,
   })
   @IsOptional()
-  @IsArray()
-  @IsNumber({}, { each: true })
-  menuIds?: number[];
+  @IsNumber()
+  menuId?: number;
 
   @ApiPropertyOptional({
     description: 'Array of item IDs associated with this category',

@@ -30,7 +30,7 @@ export class CategoryService {
 
   // CREATE A SINGLE CATEGORY
   public async createCategory(createCategoryDto: CreateCategoryDto) {
-    const { title, description, menuIds } = createCategoryDto;
+    const { title, description, menuId, itemIds } = createCategoryDto;
 
     try {
       // FIND IF THE CATEGORY ALREADY EXISTS
@@ -43,23 +43,41 @@ export class CategoryService {
         throw new ConflictException('Category already exists');
       }
 
-      // FIND IF THE MENU EXIST
-      const menu = await this.menuRepository.find({
-        where: { id: In(menuIds), deletedAt: null },
-      });
-
-      if (!menu) {
-        this.logger.warn(`Menu was not found`);
-        throw new NotFoundException('Menu not found');
-      }
-
-      // CREATE THE CATEGORY WITH THE MENU IT BELONGS TO
+      // CREATE THE CATEGORY
       const category = this.categoryRepository.create({
         title,
         description,
       });
 
-      category.menus = menu;
+      // For numbers: null, undefined, 0, false are all NEGATIVE
+
+      // ATTACH MENU IF THE MENU EXIST
+      if (menuId && menuId !== null) {
+        const menu = await this.menuRepository.findOne({
+          where: { id: menuId, deletedAt: null },
+        });
+
+        if (!menu) {
+          this.logger.warn(`Menu was not found`);
+          throw new NotFoundException('Menu not found');
+        }
+
+        category.menu = menu;
+      }
+
+      // ATTACH ITEMS IF ITEMS ARE ADDED
+      if (Array.isArray(itemIds) && itemIds.length > 0) {
+        const newItems = await this.itemsRepository.find({
+          where: { id: In(itemIds), deletedAt: null },
+        });
+
+        if (newItems.length !== itemIds.length) {
+          this.logger.warn('Some items not found');
+          throw new NotFoundException('Item not found');
+        }
+
+        category.items = newItems;
+      }
 
       return await this.categoryRepository.save(category);
     } catch (error) {
@@ -124,7 +142,7 @@ export class CategoryService {
     categoryId: number,
     updateCategoryDto: UpdateCategoryDto,
   ) {
-    const { menuIds, itemIds, ...rest } = updateCategoryDto;
+    const { menuId, itemIds, ...rest } = updateCategoryDto;
 
     try {
       // CHECK IF THE CATEGORY EXISTS
@@ -150,21 +168,21 @@ export class CategoryService {
 
       // 3. If menuIds has values, this means the menu was edited by the user and it is greater than 0 so the else block will happen.
 
-      // UPDATE MENU IF IT WAS UPDATED OR SKIP
-      if (menuIds) {
-        if (menuIds.length === 0) {
-          category.menus = [];
+      // UPDATE MENU IF IT WAS CHANGED
+      if (menuId !== undefined) {
+        if (menuId === null) {
+          category.menu = null;
         } else {
-          const newMenus = await this.menuRepository.find({
-            where: { id: In(menuIds), deletedAt: null },
+          const menu = await this.menuRepository.findOne({
+            where: { id: menuId, deletedAt: null },
           });
 
-          if (newMenus.length !== menuIds.length) {
+          if (!menu) {
             this.logger.warn(`Some menus not found`);
             throw new NotFoundException('Menu not found');
           }
 
-          category.menus = newMenus;
+          category.menu = menu;
         }
       }
 

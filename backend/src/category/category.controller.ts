@@ -23,7 +23,7 @@ import {
 } from '@nestjs/swagger';
 
 @Controller('category')
-@ApiTags('Category')
+@ApiTags('Menu Categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 

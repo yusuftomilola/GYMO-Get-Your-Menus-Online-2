@@ -35,7 +35,7 @@ export class Menu {
   })
   isActive?: boolean;
 
-  @ManyToMany(() => Category, (category) => category.menus)
+  @OneToMany(() => Category, (category) => category.menu)
   categories: Category[];
 
   @CreateDateColumn()

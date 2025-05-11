@@ -37,9 +37,8 @@ export class Category {
   })
   isActive?: boolean;
 
-  @ManyToMany(() => Menu, (menus) => menus.categories, { onDelete: 'CASCADE' })
-  @JoinTable()
-  menus: Menu[];
+  @ManyToOne(() => Menu, (menu) => menu.categories, { onDelete: 'CASCADE' })
+  menu: Menu;
 
   @OneToMany(() => Item, (item) => item.category)
   items: Item[];
