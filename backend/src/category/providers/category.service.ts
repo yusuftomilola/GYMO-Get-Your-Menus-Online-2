@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -12,6 +13,8 @@ import { handleDatabaseError } from 'src/common/utils/handleDatabaseError';
 import { Menu } from 'src/menu/entities/menu.entity';
 import { UpdateCategoryDto } from '../dtos/updateCategory.dto';
 import { Item } from 'src/items/entities/items.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class CategoryService {
@@ -26,6 +29,9 @@ export class CategoryService {
 
     @InjectRepository(Item)
     private readonly itemsRepository: Repository<Item>,
+
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
   // CREATE A SINGLE CATEGORY
@@ -93,6 +99,13 @@ export class CategoryService {
 
   // GET ALL CETEGORIES
   public async getCategories() {
+    const cachedCategories = await this.cacheManager.get('categories');
+
+    if (cachedCategories) {
+      console.log('Cached categories');
+      return cachedCategories;
+    }
+
     try {
       const categories = await this.categoryRepository.find({
         where: { deletedAt: null, isActive: true },
@@ -104,6 +117,9 @@ export class CategoryService {
         throw new NotFoundException('No categories found');
       }
 
+      await this.cacheManager.set('categories', categories);
+
+      console.log('Database categories');
       return categories;
     } catch (error) {
       this.logger.error('Error finding categories');
@@ -116,16 +132,26 @@ export class CategoryService {
 
   // GET A SINGLE CATEGORY
   public async getSingleCategory(categoryId: number) {
+    const cachedCategory = await this.cacheManager.get('category');
+
+    if (cachedCategory) {
+      console.log('Category from Cache');
+      return cachedCategory;
+    }
+
     try {
       const category = await this.categoryRepository.findOne({
         where: { id: categoryId, isActive: true, deletedAt: null },
-        relations: ['menus', 'items'],
+        relations: ['menu', 'items'],
       });
 
       if (!category) {
         this.logger.warn(`Category with the id: ${categoryId} was not found`);
         throw new NotFoundException('Category not found');
       }
+
+      await this.cacheManager.set('category', category);
+      console.log('Category from Database');
 
       return category;
     } catch (error) {

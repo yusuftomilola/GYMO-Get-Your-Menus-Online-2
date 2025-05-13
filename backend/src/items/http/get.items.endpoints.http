@@ -1,0 +1,6 @@
+// GET ALL ITEMS
+GET http://localhost:3000/items
+
+
+// GET SINGLE ITEM
+GET http://localhost:3000/items/1

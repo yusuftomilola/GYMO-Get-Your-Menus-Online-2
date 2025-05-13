@@ -29,16 +29,17 @@ export class Item {
   description?: string;
 
   @Column({
-    type: 'varchar',
-    nullable: true,
-  })
-  imageUrl?: string;
-
-  @Column({
     type: 'decimal',
     nullable: true,
   })
   price?: number;
+
+  @Column({
+    type: 'boolean',
+    default: true,
+    nullable: true,
+  })
+  isActive?: boolean;
 
   @ManyToOne(() => Category, (category) => category.items, {
     onDelete: 'CASCADE',

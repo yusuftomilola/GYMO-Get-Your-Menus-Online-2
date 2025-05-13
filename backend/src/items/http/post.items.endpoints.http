@@ -1,0 +1,11 @@
+// CREATE A SINGLE ITEM
+
+POST http://localhost:3000/items/new
+Content-Type: application/json
+
+{
+    "title": "Nigerian Spag",
+    "description": "A type of spagetti balouni",
+    "price": 1000,
+    "categoryId": 4
+}

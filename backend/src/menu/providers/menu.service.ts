@@ -53,7 +53,7 @@ export class MenuService {
     try {
       const menus = await this.menuRepository.find();
 
-      if (!menus) {
+      if (!menus || menus.length === 0) {
         this.logger.warn('No menus found');
         throw new NotFoundException('Menus not found');
       }

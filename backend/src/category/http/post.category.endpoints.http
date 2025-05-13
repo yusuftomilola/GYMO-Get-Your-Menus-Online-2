@@ -4,7 +4,7 @@ POST http://localhost:3000/category/new
 Content-Type: application/json
 
 {
-    "title": "Lunch",
-    "description": "All you can eat dishes to energize ur afternoons",
-    "menuId": 2
+    "title": "Spagetti Balouni",
+    "description": "Italian spag with a hint of indian spices",
+    "menuId": 3
 }

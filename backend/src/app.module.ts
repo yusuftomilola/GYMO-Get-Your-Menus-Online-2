@@ -6,10 +6,15 @@ import { ItemsModule } from './items/items.module';
 import { CategoryModule } from './category/category.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 120000,
+    }),
     MenuModule,
     ItemsModule,
     CategoryModule,

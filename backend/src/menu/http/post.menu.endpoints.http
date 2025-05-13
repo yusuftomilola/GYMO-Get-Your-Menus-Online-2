@@ -3,6 +3,6 @@ POST http://localhost:3000/menu/new
 Content-Type: application/json
 
 {
-    "title": "Northen Delicacies",
-    "description": "All variaties of northern delicacies just for you"
+    "title": "Urban Specials",
+    "description": "All variaties of modern dishes just for you"
 }
