@@ -1,0 +1,2 @@
+// DELETE A SINGLE ITEM
+DELETE http://localhost:3000/items/4/delete

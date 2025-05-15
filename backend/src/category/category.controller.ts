@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CategoryService } from './providers/category.service';
 import { CreateCategoryDto } from './dtos/createCategory.dto';
@@ -21,11 +22,18 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+// import { CacheInterceptor } from '@nestjs/cache-manager';
 
+// @UseInterceptors(CacheInterceptor)
 @Controller('category')
 @ApiTags('Menu Categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
+
+  @Get('clear-cache')
+  public async clearCache() {
+    return await this.categoryService.clearCache();
+  }
 
   // CREATE A NEW CATEGORY
   @Post('new')

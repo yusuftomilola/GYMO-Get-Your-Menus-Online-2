@@ -4,3 +4,6 @@ GET http://localhost:3000/category
 
 // GET A SINGLE CATEGORY
 GET http://localhost:3000/category/4
+
+// CLEAR CACHE
+GET http://localhost:3000/clear-cache

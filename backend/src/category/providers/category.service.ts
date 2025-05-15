@@ -34,6 +34,12 @@ export class CategoryService {
     private readonly cacheManager: Cache,
   ) {}
 
+  //clear cache
+  public async clearCache() {
+    console.log('Cache cleared');
+    return await this.cacheManager.clear();
+  }
+
   // CREATE A SINGLE CATEGORY
   public async createCategory(createCategoryDto: CreateCategoryDto) {
     const { title, description, menuId, itemIds } = createCategoryDto;
@@ -99,12 +105,12 @@ export class CategoryService {
 
   // GET ALL CETEGORIES
   public async getCategories() {
-    const cachedCategories = await this.cacheManager.get('categories');
+    // const cachedCategories = await this.cacheManager.get('categories');
 
-    if (cachedCategories) {
-      console.log('Cached categories');
-      return cachedCategories;
-    }
+    // if (cachedCategories) {
+    //   console.log('Cached categories');
+    //   return cachedCategories;
+    // }
 
     try {
       const categories = await this.categoryRepository.find({
@@ -117,7 +123,7 @@ export class CategoryService {
         throw new NotFoundException('No categories found');
       }
 
-      await this.cacheManager.set('categories', categories);
+      //   await this.cacheManager.set('categories', categories);
 
       console.log('Database categories');
       return categories;
@@ -132,12 +138,12 @@ export class CategoryService {
 
   // GET A SINGLE CATEGORY
   public async getSingleCategory(categoryId: number) {
-    const cachedCategory = await this.cacheManager.get('category');
+    // const cachedCategory = await this.cacheManager.get('category');
 
-    if (cachedCategory) {
-      console.log('Category from Cache');
-      return cachedCategory;
-    }
+    // if (cachedCategory) {
+    //   console.log('Category from Cache');
+    //   return cachedCategory;
+    // }
 
     try {
       const category = await this.categoryRepository.findOne({
@@ -150,7 +156,7 @@ export class CategoryService {
         throw new NotFoundException('Category not found');
       }
 
-      await this.cacheManager.set('category', category);
+      //   await this.cacheManager.set('category', category);
       console.log('Category from Database');
 
       return category;

@@ -1,0 +1,9 @@
+// UPDATE A SINGLE ITEM
+
+PATCH http://localhost:3000/items/1/edit
+Content-Type: application/json
+
+{
+    "title": "Nigerian Spag",
+    "price": 2500
+}
